@@ -570,6 +570,12 @@
       prepareReport();
     });
 
+    $("themeToggle").addEventListener("click", function () {
+      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("pelaiTheme", next); } catch (e) {}
+    });
+
     $("download-pdf").addEventListener("click", downloadPdf);
 
     var cfg = window.SS_CONFIG || {};

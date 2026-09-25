@@ -110,13 +110,30 @@ button, input { font: inherit; }
 .how { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--muted); max-width: 65ch; }
 .how strong { color: var(--text); font-weight: 700; }
 
-.field { display: grid; gap: 6px; max-width: 420px; }
+#intro-form { display: grid; gap: 8px; }
 .field-label { font-weight: 500; }
 .field-label em { font-style: normal; color: var(--muted); font-weight: 400; }
-.field input {
-  padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line);
+/* Name box and Start button share one line; the button drops below on phones */
+.name-row { display: flex; align-items: stretch; gap: 12px; }
+.name-row input {
+  flex: 1 1 auto; min-width: 0; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line);
   background: var(--surface-2); color: var(--text);
 }
+.name-row .btn { flex: none; }
+@media (max-width: 560px) {
+  .name-row { flex-direction: column; }
+  .name-row .btn { width: 100%; }
+}
+
+/* Light / dark toggle, matching the Pelai registration site */
+.topbar { position: fixed; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 60; }
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px; font: inherit; font-size: 1rem; line-height: 1;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 12px; cursor: pointer; box-shadow: 0 8px 18px -10px rgba(12, 26, 38, .3);
+}
+.theme-toggle .sun, .theme-toggle .moon { opacity: .35; transition: opacity .2s; }
+[data-theme="light"] .theme-toggle .sun, [data-theme="dark"] .theme-toggle .moon { opacity: 1; }
 
 .section-head { display: grid; gap: 6px; }
 .section-note { font-style: italic; color: var(--muted); }
