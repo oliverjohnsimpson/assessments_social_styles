@@ -41,4 +41,5 @@ The explanations of *Pace*, *Priorities* and the backup styles are written from 
 
 Pelai Collective "Ark" palette (Variation C: equal weight): Ebony `#120700`, Dark Timber `#3A1A06`,
 Gold Grain `#C8A060`, Abyss `#062030`, Living Teal `#1A8090`, Sea Mist `#E8F4F8`.
-The logo is currently a text wordmark ("PELAI COLLECTIVE"), to be replaced with the official logo file.
+Logos are in `assets/`: `pelai-logo-on-dark.png` (white hull, used on the dark header and PDF band),
+`pelai-logo-on-light.png` (dark hull, for light backgrounds) and `favicon.png` (hull only).

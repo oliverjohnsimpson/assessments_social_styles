@@ -351,8 +351,8 @@
     drawChart(cv, state.a, state.r, LIGHT, 1000);
     var chartImg = cv.toDataURL("image/png");
     var band = function (title) {
-      return '<div class="rpt-band"><div class="brand"><span class="brand-mark">PELAI</span><span class="brand-sub">COLLECTIVE</span></div>' +
-        "<h1>" + title + '</h1><p class="rpt-meta">' + esc(state.name) + " &middot; " + fmtDate(when) + "</p></div>";
+      return '<div class="rpt-band"><img class="rpt-logo" src="assets/pelai-logo-on-dark.png" alt="">' +
+        '<div class="rpt-band-text"><h1>' + title + '</h1><p class="rpt-meta">' + esc(state.name) + " &middot; " + fmtDate(when) + "</p></div></div>";
     };
     var foot = function (n) {
       return '<div class="rpt-foot"><span>Pelai Collective &middot; Social Styles Self-Assessment</span><span>Page ' + n + " of 3</span></div>";
