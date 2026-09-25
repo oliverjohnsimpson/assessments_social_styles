@@ -20,6 +20,13 @@
   --error: #A3361F;
   --focus: #C8A060;
 
+  /* Header: light in light mode, dark timber into deep water in dark mode */
+  --mast-bg: linear-gradient(135deg, #F4F9FB 0%, #E8F4F8 45%, #D3EAF0 100%);
+  --mast-line: #C8DCE5;
+  --mast-title: #120700;
+  --mast-lede: #4A6070;
+  --mast-eyebrow: #1A8090;
+
   --font-display: "Marcellus", "Palatino Linotype", Palatino, Georgia, serif;
   --font-body: "Karla", "Segoe UI", system-ui, -apple-system, sans-serif;
   color-scheme: light;
@@ -37,6 +44,11 @@
     --accent-soft: #0D3A48;
     --gold-ink: #D8B878;
     --error: #F08A70;
+    --mast-bg: linear-gradient(135deg, #120700 0%, #120700 45%, #062030 100%);
+    --mast-line: transparent;
+    --mast-title: #F0F8FC;
+    --mast-lede: #A0C8D8;
+    --mast-eyebrow: #5AC8E0;
     color-scheme: dark;
   }
 }
@@ -52,6 +64,11 @@
   --accent-soft: #0D3A48;
   --gold-ink: #D8B878;
   --error: #F08A70;
+  --mast-bg: linear-gradient(135deg, #120700 0%, #120700 45%, #062030 100%);
+  --mast-line: transparent;
+  --mast-title: #F0F8FC;
+  --mast-lede: #A0C8D8;
+  --mast-eyebrow: #5AC8E0;
   color-scheme: dark;
 }
 
@@ -71,19 +88,28 @@ p { margin: 0; }
 button, input { font: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-/* Masthead — dark timber into deep water */
+/* Masthead */
 .masthead {
-  background: linear-gradient(135deg, #120700 0%, #120700 45%, #062030 100%);
-  color: #F0F8FC;
+  background: var(--mast-bg);
+  border-bottom: 1px solid var(--mast-line);
+  color: var(--mast-title);
   padding-inline: 16px;
   padding-block: calc(28px + env(safe-area-inset-top, 0px)) 40px;
 }
 .masthead-inner { max-width: 760px; margin: 0 auto; display: grid; gap: 10px; }
 .brand-logo { width: auto; height: 104px; margin-bottom: 14px; }
-.eyebrow { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; color: #5AC8E0; }
+/* Dark logo on the light header, light logo on the dark header */
+.brand-logo.for-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo.for-light { display: none; }
+  :root:not([data-theme="light"]) .brand-logo.for-dark { display: block; }
+}
+:root[data-theme="dark"] .brand-logo.for-light { display: none; }
+:root[data-theme="dark"] .brand-logo.for-dark { display: block; }
+.eyebrow { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; color: var(--mast-eyebrow); }
 .eyebrow-dark { color: var(--accent); }
-.masthead h1 { font-size: clamp(34px, 7vw, 52px); line-height: 1.1; color: #F0F8FC; }
-.lede { color: #A0C8D8; max-width: 58ch; font-size: 16px; }
+.masthead h1 { font-size: clamp(34px, 7vw, 52px); line-height: 1.1; color: var(--mast-title); }
+.lede { color: var(--mast-lede); max-width: 58ch; font-size: 16px; }
 
 .shell { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 0 48px; }
 
