@@ -16,7 +16,7 @@
 
 var ROOT_FOLDER_ID = '16mN8-eyhyVqLxNZy3OpXky1R2ueGYKNW';
 var TIMEZONE = 'Asia/Kolkata';
-var SAVE_TOKEN = 'pelai-social-styles-v1'; // must match saveToken in config.js
+var SAVE_TOKEN = 'pelai-social-styles-v1'; // must match saveToken in social_styles/config.js
 var MAX_PDF_BYTES = 5 * 1024 * 1024;
 var STYLES = ['Driver', 'Expressive', 'Amiable', 'Analytical'];
 

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pelai Social Styles</title>
+<meta name="description" content="Pelai Collective Social Styles self-assessment: find your social style from your assertiveness and responsiveness ratings.">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;700&family=Marcellus&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <img class="brand-logo" src="assets/pelai-logo-on-dark.png" alt="Pelai Collective" width="287" height="360">
+    <p class="eyebrow">Self-assessment</p>
+    <h1>Social Styles</h1>
+    <p class="lede">Rate how you see yourself on 30 pairs of words. Your answers place you on the Social Styles chart and show which of the four styles fits you best.</p>
+  </div>
+</header>
+
+<main class="shell">
+  <ol class="steps" id="steps" aria-label="Progress">
+    <li data-step="0" class="is-current"><span>About you</span></li>
+    <li data-step="1"><span>Assertiveness</span></li>
+    <li data-step="2"><span>Responsiveness</span></li>
+    <li data-step="3"><span>Your style</span></li>
+  </ol>
+
+  <!-- Step 0: intro -->
+  <section class="panel" id="step-0">
+    <h2>Before you begin</h2>
+    <ul class="how">
+      <li>There are two sections of 15 items each: <strong>Assertiveness</strong>, then <strong>Responsiveness</strong>.</li>
+      <li>Each item is a pair of opposite words. Pick the number that sits closer to the word that describes you.</li>
+      <li>Answer every item. There are no right or wrong answers; describe yourself as you are, not as you would like to be.</li>
+      <li>When you finish, you can download your report. A copy is also kept by Pelai Collective, where only its administrator can access it. Your answers are not kept in this browser: refreshing the page starts the assessment again.</li>
+    </ul>
+    <form id="intro-form" novalidate>
+      <label class="field" for="participant-name">
+        <span class="field-label">Your name <em>(printed on your report)</em></span>
+        <input id="participant-name" name="participant-name" type="text" autocomplete="name" maxlength="80" required>
+      </label>
+      <p class="error" id="name-error" hidden>Enter your name to continue.</p>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Start the assessment</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Step 1: assertiveness -->
+  <section class="panel" id="step-1" hidden>
+    <div class="section-head">
+      <p class="eyebrow eyebrow-dark">Section 1 of 2</p>
+      <h2>Assertiveness ratings</h2>
+      <p class="section-note">I perceive myself as:</p>
+      <p class="scale-note">Scale for this section: <strong>1</strong> is nearest the left word, <strong>4</strong> is nearest the right word.</p>
+    </div>
+    <form id="form-a" novalidate>
+      <div class="items" id="items-a"></div>
+      <p class="error" id="error-a" hidden></p>
+      <div class="actions">
+        <span class="count" id="count-a" aria-live="polite"></span>
+        <button type="submit" class="btn btn-primary">Continue to Responsiveness</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Step 2: responsiveness -->
+  <section class="panel" id="step-2" hidden>
+    <div class="section-head">
+      <p class="eyebrow eyebrow-dark">Section 2 of 2</p>
+      <h2>Responsiveness ratings</h2>
+      <p class="section-note">I perceive myself as:</p>
+      <p class="scale-note">Scale for this section: <strong>4</strong> is nearest the left word, <strong>1</strong> is nearest the right word.</p>
+    </div>
+    <form id="form-r" novalidate>
+      <div class="items" id="items-r"></div>
+      <p class="error" id="error-r" hidden></p>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="back-to-a">Back</button>
+        <span class="count" id="count-r" aria-live="polite"></span>
+        <button type="submit" class="btn btn-primary">See my social style</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Step 3: result -->
+  <section class="panel panel-result" id="step-3" hidden>
+    <div id="result"></div>
+    <div class="actions actions-result">
+      <button type="button" class="btn btn-primary" id="download-pdf">Download PDF report</button>
+      <button type="button" class="btn btn-ghost" id="restart">Take the assessment again</button>
+      <p class="status" id="pdf-status" aria-live="polite"></p>
+    </div>
+    <form class="email-box" id="email-form" novalidate hidden>
+      <div class="email-head">
+        <h3>Email your report</h3>
+        <p class="note">Send the PDF report to one email address of your choice. You can send it up to 3 times.</p>
+      </div>
+      <label class="field-label" for="report-email">Email address</label>
+      <div class="email-row">
+        <input id="report-email" name="report-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" aria-describedby="email-status">
+        <button type="submit" class="btn btn-primary" id="email-send" disabled>Send report</button>
+      </div>
+      <p class="email-status" id="email-status" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Pelai Collective &middot; Social Styles Self-Assessment</p>
+</footer>
+
+<!-- Off-screen report pages, rendered to images for the PDF -->
+<div id="report-stage" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

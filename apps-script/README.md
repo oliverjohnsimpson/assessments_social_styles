@@ -45,9 +45,9 @@ The script runs under admin@pelaicollective.com, so ping@pelaicollective.com mus
    - the number of emails left today (about 1,500 for Google Workspace accounts)
 6. Click **Deploy > New deployment**, type **Web app**, with
    *Execute as*: **Me (admin@pelaicollective.com)** and *Who has access*: **Anyone**.
-7. Copy the **Web app URL** (it ends in `/exec`) into `saveEndpoint` in `config.js` on the website.
+7. Copy the **Web app URL** (it ends in `/exec`) into `saveEndpoint` in `social_styles/config.js` and merge it into `main`.
    The "Email your report" box appears on the site once this is set.
 
 To change the script later, use **Deploy > Manage deployments > Edit > New version**, which keeps the same URL.
-If you change `SAVE_TOKEN` in `Code.gs`, change `saveToken` in `config.js` to match.
-To change the 3-send limit, edit `MAX_EMAILS_PER_REPORT` in `Code.gs` and the note in `index.html`.
+If you change `SAVE_TOKEN` in `Code.gs`, change `saveToken` in `social_styles/config.js` to match.
+To change the 3-send limit, edit `MAX_EMAILS_PER_REPORT` in `Code.gs` and the note in `social_styles/index.html`.

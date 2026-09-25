@@ -3,16 +3,36 @@
 An online version of the Social Styles self-assessment in
 [`docs/social-styles-questionnaire.pdf`](docs/social-styles-questionnaire.pdf).
 
-A static site with no build step: `index.html`, `styles.css`, `config.js`, `content.js`, `app.js` and `assets/`.
+Live at **https://assessments.pelaicollective.com/social_styles/**, served by GitHub Pages from the `main` branch.
 
-## Deploying to Hostinger
+## Repository layout
 
-1. Create the subdomain (e.g. `assessments.pelaicollective.com`) in hPanel.
-2. Upload `index.html`, `styles.css`, `config.js`, `content.js`, `app.js` and the `assets/` folder into
-   `social_styles/` inside the subdomain's document root, so the page is served at
-   `https://assessments.pelaicollective.com/social_styles/`. (`docs/` and `apps-script/` are not needed on the server.)
-3. Turn on SSL for the subdomain.
-4. Set `saveEndpoint` in `config.js` to the Apps Script Web app URL (see `apps-script/README.md`).
+| Path | What it is |
+|---|---|
+| `social_styles/` | The site: `index.html`, `styles.css`, `config.js`, `content.js`, `app.js`, `assets/`. Static files, no build step. |
+| `index.html` | Redirects the bare domain to `social_styles/`. |
+| `CNAME` | The custom domain for GitHub Pages. |
+| `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
+| `apps-script/` | Google Apps Script that saves reports to Drive and emails them (not served by Pages). |
+| `docs/` | The source questionnaire PDF. |
+
+## Hosting on GitHub Pages
+
+Once, in the repository on GitHub:
+
+1. **Settings → Pages → Build and deployment**: Source **Deploy from a branch**, Branch **main**, folder **/ (root)**. Save.
+2. In **Hostinger → Domains → pelaicollective.com → DNS**, add a record: type **CNAME**, name **assessments**,
+   target **oliverjohnsimpson.github.io**.
+3. Back in **Settings → Pages**, check that *Custom domain* shows `assessments.pelaicollective.com`
+   (it is read from the `CNAME` file) and the DNS check passes. Then tick **Enforce HTTPS**.
+   DNS changes can take from a few minutes to a few hours.
+
+After that, every change merged into `main` goes live within a couple of minutes.
+Set `saveEndpoint` in `social_styles/config.js` to the Apps Script Web app URL (see `apps-script/README.md`)
+to turn on saving to Drive and the email option.
+
+To add another assessment later, put it in its own folder next to `social_styles/`,
+e.g. `assessments.pelaicollective.com/<name>/`.
 
 ## How it works
 
@@ -47,12 +67,12 @@ toward, e.g. "Amiable Driver" for a Driver who sits toward the Amiable side.
 
 ## Editing content
 
-All wording (items and interpretation) is in `content.js`, copied from the source PDF with spelling corrections only.
+All wording (items and interpretation) is in `social_styles/content.js`, copied from the source PDF with spelling corrections only.
 The explanations of *Pace*, *Priorities* and the backup styles are written from the questionnaire's own content.
 
 ## Brand
 
 Pelai Collective "Ark" palette (Variation C: equal weight): Ebony `#120700`, Dark Timber `#3A1A06`,
 Gold Grain `#C8A060`, Abyss `#062030`, Living Teal `#1A8090`, Sea Mist `#E8F4F8`.
-Logos are in `assets/`: `pelai-logo-on-dark.png` (white hull, used on the dark header and PDF band),
+Logos are in `social_styles/assets/`: `pelai-logo-on-dark.png` (white hull, used on the dark header and PDF band),
 `pelai-logo-on-light.png` (dark hull, for light backgrounds) and `favicon.png` (hull only).
