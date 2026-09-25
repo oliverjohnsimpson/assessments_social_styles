@@ -176,6 +176,24 @@ button, input { font: inherit; }
 .error { color: var(--error); font-weight: 500; }
 .status { flex-basis: 100%; text-align: right; font-size: 14px; color: var(--muted); min-height: 1.4em; }
 
+/* Email the report */
+.email-box {
+  border-top: 1px solid var(--line); padding-top: 22px;
+  display: grid; gap: 8px; max-width: 560px;
+}
+.email-head { display: grid; gap: 4px; margin-bottom: 6px; }
+.email-head h3 { font-size: 21px; }
+.email-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.email-row input {
+  flex: 1 1 240px; min-width: 0; padding: 11px 14px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+}
+.email-row input[aria-invalid="true"] { border-color: var(--error); }
+.email-row .btn[disabled] { opacity: .45; cursor: not-allowed; filter: none; }
+.email-status { font-size: 14px; color: var(--muted); min-height: 1.4em; }
+.email-status.is-error { color: var(--error); font-weight: 500; }
+.email-status.is-ok { color: var(--accent); font-weight: 500; }
+
 /* Result */
 .result { display: grid; gap: 28px; }
 .result-hero { display: grid; gap: 8px; }

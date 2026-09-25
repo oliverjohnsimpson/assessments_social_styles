@@ -424,18 +424,95 @@
         // text/plain keeps this a "simple" request, which Apps Script web apps accept cross-origin
         var res = await fetch(cfg.saveEndpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body });
         var out = await res.json();
-        if (out && out.ok) return;
+        if (out && out.ok) return out;
         throw new Error((out && out.error) || "Save failed");
       } catch (err) {
         console.warn("Report save attempt " + (attempt + 1) + " failed:", err);
       }
     }
+    return null;
   }
 
   function prepareReport() {
     state.report = createReport();
-    state.report.then(saveReport).catch(function (err) { console.error(err); });
+    state.saved = state.report.then(saveReport).catch(function (err) { console.error(err); return null; });
   }
+
+  /* ---------- Email the report ---------- */
+
+  // Same rule as EMAIL_PATTERN in apps-script/Code.gs
+  var EMAIL_PATTERN = /^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
+
+  function validEmail(v) {
+    return v.length <= 254 && EMAIL_PATTERN.test(v);
+  }
+
+  function emailStatus(text, kind) {
+    var el = $("email-status");
+    el.textContent = text;
+    el.classList.toggle("is-error", kind === "error");
+    el.classList.toggle("is-ok", kind === "ok");
+  }
+
+  function onEmailInput() {
+    var input = $("report-email"), v = input.value.trim();
+    var ok = validEmail(v);
+    $("email-send").disabled = !ok || state.emailBusy || state.emailsLeft === 0;
+    if (ok || !v) { input.removeAttribute("aria-invalid"); if ($("email-status").classList.contains("is-error")) emailStatus(""); }
+  }
+
+  function onEmailBlur() {
+    var input = $("report-email"), v = input.value.trim();
+    if (v && !validEmail(v)) {
+      input.setAttribute("aria-invalid", "true");
+      emailStatus("Enter a valid email address, like name@example.com.", "error");
+    }
+  }
+
+  var EMAIL_ERRORS = {
+    invalid_email: "That email address was not accepted. Check it and try again.",
+    limit: "This report has already been emailed 3 times, which is the limit.",
+    expired: "This report can no longer be emailed. Download it instead, or take the assessment again.",
+    sender_not_configured: "Email is not available right now. Download your report instead.",
+    quota: "Too many reports have been emailed today. Download your report, or try again tomorrow."
+  };
+
+  async function sendEmail(e) {
+    e.preventDefault();
+    var cfg = window.SS_CONFIG || {};
+    var to = $("report-email").value.trim();
+    if (!validEmail(to)) { onEmailBlur(); return; }
+    state.emailBusy = true;
+    $("email-send").disabled = true;
+    emailStatus("Sending your report\u2026");
+    try {
+      var saved = await state.saved;
+      if (!saved) {
+        // The automatic save failed; try once more before emailing
+        state.saved = state.report.then(saveReport);
+        saved = await state.saved;
+      }
+      if (!saved) throw new Error("save_failed");
+      var res = await fetch(cfg.saveEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ token: cfg.saveToken || "", action: "email", reportId: saved.reportId, key: saved.key, email: to })
+      });
+      var out = await res.json();
+      if (typeof out.emailsLeft === "number") state.emailsLeft = out.emailsLeft;
+      if (!out.ok) throw new Error(out.error || "send_failed");
+      var left = state.emailsLeft;
+      emailStatus("Report sent to " + to + "." + (left > 0 ? " You can send it " + left + " more time" + (left === 1 ? "" : "s") + "." : " That was the last send for this report."), "ok");
+    } catch (err) {
+      console.error(err);
+      emailStatus(EMAIL_ERRORS[err.message] || "The email could not be sent. Check your connection and try again.", "error");
+    } finally {
+      state.emailBusy = false;
+      if (state.emailsLeft === 0) $("report-email").disabled = true;
+      onEmailInput();
+    }
+  }
+
 
   async function downloadPdf() {
     var btn = $("download-pdf"), status = $("pdf-status");
@@ -494,6 +571,14 @@
     });
 
     $("download-pdf").addEventListener("click", downloadPdf);
+
+    var cfg = window.SS_CONFIG || {};
+    if (cfg.saveEndpoint) {
+      $("email-form").hidden = false;
+      $("report-email").addEventListener("input", onEmailInput);
+      $("report-email").addEventListener("blur", onEmailBlur);
+      $("email-form").addEventListener("submit", sendEmail);
+    }
     $("restart").addEventListener("click", function () { window.location.reload(); });
 
     var redraw = function () { redrawScreenChart(); };

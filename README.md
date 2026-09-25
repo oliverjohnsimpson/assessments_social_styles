@@ -25,9 +25,11 @@ A static site with no build step: `index.html`, `styles.css`, `config.js`, `cont
 5. The result shows only the participant's own style: description, summary, traits, style summary,
    backup style, interactions with the other styles, and the two scales.
 6. **Download PDF report**: a 3-page A4 report. Each page is a flat image, so the text cannot be selected or copied.
+7. **Email your report**: one email address, checked before the Send button turns on. The report is sent from
+   ping@pelaicollective.com with a short summary of the profile in the email and the PDF attached. Up to 3 sends per report.
 
 When the result appears, a copy of the report is sent automatically to Pelai Collective's Google Drive,
-into a folder for that day (IST), through the Apps Script in [`apps-script/`](apps-script/README.md).
+into the `reports` folder, inside a single folder for that day (IST), through the Apps Script in [`apps-script/`](apps-script/README.md).
 Only the admin account can open those reports. Nothing is kept in the browser: refreshing the page starts
 the assessment again, with the items reshuffled.
 

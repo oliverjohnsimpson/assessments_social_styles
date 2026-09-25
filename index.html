@@ -96,6 +96,18 @@
       <button type="button" class="btn btn-ghost" id="restart">Take the assessment again</button>
       <p class="status" id="pdf-status" aria-live="polite"></p>
     </div>
+    <form class="email-box" id="email-form" novalidate hidden>
+      <div class="email-head">
+        <h3>Email your report</h3>
+        <p class="note">Send the PDF report to one email address of your choice. You can send it up to 3 times.</p>
+      </div>
+      <label class="field-label" for="report-email">Email address</label>
+      <div class="email-row">
+        <input id="report-email" name="report-email" type="email" inputmode="email" autocomplete="email" maxlength="254" placeholder="name@example.com" aria-describedby="email-status">
+        <button type="submit" class="btn btn-primary" id="email-send" disabled>Send report</button>
+      </div>
+      <p class="email-status" id="email-status" aria-live="polite"></p>
+    </form>
   </section>
 </main>
 
