@@ -3,8 +3,16 @@
 An online version of the Social Styles self-assessment in
 [`docs/social-styles-questionnaire.pdf`](docs/social-styles-questionnaire.pdf).
 
-A static site with no build step: `index.html`, `styles.css`, `content.js` and `app.js`.
-Open `index.html` in a browser, or host the folder on any static host (for example GitHub Pages).
+A static site with no build step: `index.html`, `styles.css`, `config.js`, `content.js`, `app.js` and `assets/`.
+
+## Deploying to Hostinger
+
+1. Create the subdomain (e.g. `assessments.pelaicollective.com`) in hPanel.
+2. Upload `index.html`, `styles.css`, `config.js`, `content.js`, `app.js` and the `assets/` folder into
+   `social_styles/` inside the subdomain's document root, so the page is served at
+   `https://assessments.pelaicollective.com/social_styles/`. (`docs/` and `apps-script/` are not needed on the server.)
+3. Turn on SSL for the subdomain.
+4. Set `saveEndpoint` in `config.js` to the Apps Script Web app URL (see `apps-script/README.md`).
 
 ## How it works
 
@@ -18,7 +26,10 @@ Open `index.html` in a browser, or host the folder on any static host (for examp
    backup style, interactions with the other styles, and the two scales.
 6. **Download PDF report**: a 3-page A4 report. Each page is a flat image, so the text cannot be selected or copied.
 
-Nothing is stored. Refreshing the page starts the assessment again, with the items reshuffled.
+When the result appears, a copy of the report is sent automatically to Pelai Collective's Google Drive,
+into a folder for that day (IST), through the Apps Script in [`apps-script/`](apps-script/README.md).
+Only the admin account can open those reports. Nothing is kept in the browser: refreshing the page starts
+the assessment again, with the items reshuffled.
 
 ### Ties at the midpoint cannot happen
 

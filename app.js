@@ -374,21 +374,19 @@
     return Array.prototype.slice.call(stage.querySelectorAll(".rpt"));
   }
 
-  async function downloadPdf() {
-    var btn = $("download-pdf"), status = $("pdf-status");
-    if (!window.html2canvas || !window.jspdf) {
-      status.textContent = "The PDF tools did not load. Check your internet connection and refresh the page.";
-      return;
-    }
-    btn.disabled = true;
-    status.textContent = "Preparing your report…";
+  function safeName() {
+    return state.name.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "") || "Participant";
+  }
+
+  // Build the PDF once per result. Each page becomes a flat image, so the PDF has no selectable text.
+  async function createReport() {
+    if (!window.html2canvas || !window.jspdf) throw new Error("PDF libraries not loaded");
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    var when = new Date();
     try {
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      var when = new Date();
       var pages = buildReport(when);
       var pdf = new window.jspdf.jsPDF({ unit: "mm", format: "a4", compress: true });
       for (var i = 0; i < pages.length; i++) {
-        // Each page becomes a flat image, so the PDF has no selectable text
         var canvas = await window.html2canvas(pages[i], { scale: 2, backgroundColor: "#FFFFFF", logging: false });
         var img = canvas.toDataURL("image/jpeg", 0.9);
         var w = 210, h = canvas.height * w / canvas.width;
@@ -397,18 +395,64 @@
         pdf.addImage(img, "JPEG", (210 - w) / 2, 0, w, h);
       }
       pdf.setProperties({
-        title: "Social Styles Report – " + state.name,
+        title: "Social Styles Report \u2013 " + state.name,
         subject: "Pelai Collective Social Styles Self-Assessment",
         creator: "Pelai Collective"
       });
-      var safe = state.name.replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "") || "Participant";
-      pdf.save("Pelai_Social_Style_" + safe + "_" + isoDate(when) + ".pdf");
+      return { pdf: pdf, when: when, filename: "Pelai_Social_Style_" + safeName() + "_" + isoDate(when) + ".pdf" };
+    } finally {
+      $("report-stage").innerHTML = "";
+    }
+  }
+
+  // Send a copy of the report to Pelai Collective's Google Drive (see apps-script/).
+  async function saveReport(report) {
+    var cfg = window.SS_CONFIG || {};
+    if (!cfg.saveEndpoint) return;
+    var dataUri = report.pdf.output("datauristring");
+    var body = JSON.stringify({
+      token: cfg.saveToken || "",
+      name: state.name,
+      style: state.result.main,
+      subStyle: state.result.subName,
+      assertiveness: state.a.toFixed(3),
+      responsiveness: state.r.toFixed(3),
+      pdf: dataUri.slice(dataUri.indexOf(",") + 1)
+    });
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        // text/plain keeps this a "simple" request, which Apps Script web apps accept cross-origin
+        var res = await fetch(cfg.saveEndpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body });
+        var out = await res.json();
+        if (out && out.ok) return;
+        throw new Error((out && out.error) || "Save failed");
+      } catch (err) {
+        console.warn("Report save attempt " + (attempt + 1) + " failed:", err);
+      }
+    }
+  }
+
+  function prepareReport() {
+    state.report = createReport();
+    state.report.then(saveReport).catch(function (err) { console.error(err); });
+  }
+
+  async function downloadPdf() {
+    var btn = $("download-pdf"), status = $("pdf-status");
+    btn.disabled = true;
+    status.textContent = "Preparing your report\u2026";
+    try {
+      if (!state.report) prepareReport();
+      var report = await state.report;
+      report.pdf.save(report.filename);
       status.textContent = "Report downloaded.";
     } catch (err) {
       console.error(err);
-      status.textContent = "The report could not be created. Try again, or use a different browser.";
+      state.report = null;
+      status.textContent = !window.html2canvas || !window.jspdf
+        ? "The PDF tools did not load. Check your internet connection and refresh the page."
+        : "The report could not be created. Try again, or use a different browser.";
     } finally {
-      $("report-stage").innerHTML = "";
       btn.disabled = false;
     }
   }
@@ -446,6 +490,7 @@
       state.result = classify(state.a, state.r);
       showStep(3);
       renderResult();
+      prepareReport();
     });
 
     $("download-pdf").addEventListener("click", downloadPdf);
