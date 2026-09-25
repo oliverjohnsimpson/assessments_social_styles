@@ -1,5 +1,5 @@
 /* Pelai Collective — Social Styles Self-Assessment
- * Scoring follows docs/social-styles-questionnaire.pdf:
+ * Scoring follows the Self-Assessment of Social Styles questionnaire:
  *   Assertiveness: left word = 1 … right word = 4, total / 15
  *   Responsiveness: left word = 4 … right word = 1, total / 15
  * Chart: Assertiveness on x (1 Asking → 4 Telling), Responsiveness on y

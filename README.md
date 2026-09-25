@@ -1,7 +1,7 @@
 # Pelai Collective — Social Styles Self-Assessment
 
-An online version of the Social Styles self-assessment in
-[`docs/social-styles-questionnaire.pdf`](docs/social-styles-questionnaire.pdf).
+An online version of the "Self-Assessment of Social Styles" questionnaire (the source PDF is kept privately by
+Pelai Collective, not in this repository).
 
 Live at **https://assessments.pelaicollective.com/social_styles/**, served by GitHub Pages from the `main` branch.
 
@@ -14,7 +14,6 @@ Live at **https://assessments.pelaicollective.com/social_styles/**, served by Gi
 | `CNAME` | The custom domain for GitHub Pages. |
 | `.nojekyll` | Tells GitHub Pages to serve the files as they are. |
 | `apps-script/` | Google Apps Script that saves reports to Drive and emails them (not served by Pages). |
-| `docs/` | The source questionnaire PDF. |
 
 ## Hosting on GitHub Pages
 

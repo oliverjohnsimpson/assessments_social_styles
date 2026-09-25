@@ -1,7 +1,7 @@
 /*
  * Social Styles Self-Assessment — content.
  * All item wording and interpretation text is taken from
- * docs/social-styles-questionnaire.pdf (spelling corrected only).
+ * the Self-Assessment of Social Styles questionnaire (spelling corrected only).
  */
 window.SS_CONTENT = {
   /* Page 1 — Assertiveness Ratings. Left word scores 1, right word scores 4. */
