@@ -9,6 +9,6 @@
  *               can read this file.
  */
 window.SS_CONFIG = {
-  saveEndpoint: "",
+  saveEndpoint: "https://script.google.com/macros/s/AKfycbxxrzCvlmKASqeVchEs-R2Mu7fSXRF9ZMr_QVWEB_h59VV8aC-4LP4cABpGtCSAuVmF/exec",
   saveToken: "pelai-social-styles-v1"
 };
