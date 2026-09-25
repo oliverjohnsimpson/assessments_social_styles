@@ -23,6 +23,8 @@ var STYLES = ['Driver', 'Expressive', 'Amiable', 'Analytical'];
 var SENDER = 'ping@pelaicollective.com'; // must be a "Send mail as" address of the deploying account
 var SENDER_NAME = 'Pelai Collective';
 var EMAIL_SUBJECT = 'Your Pelai Collective Social Styles report';
+// Shown at the right of the email header; served by the website (GitHub Pages)
+var EMAIL_LOGO_URL = 'https://assessments.pelaicollective.com/social_styles/assets/pelai-logo-email.png';
 var MAX_EMAILS_PER_REPORT = 3;
 var EMAIL_WINDOW_SECONDS = 6 * 60 * 60; // a report can be emailed for 6 hours after it is saved
 var EMAIL_PATTERN = /^[A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
@@ -147,14 +149,17 @@ function emailReport_(data) {
   if (MailApp.getRemainingDailyQuota() < 1) return { ok: false, error: 'quota' };
 
   var file = DriveApp.getFileById(String(data.reportId));
-  var mail = emailContent_(facts);
-  GmailApp.sendEmail(to, EMAIL_SUBJECT, mail.text, {
+  var logo = emailLogo_();
+  var mail = emailContent_(facts, !!logo);
+  var options = {
     from: SENDER,
     name: SENDER_NAME,
     replyTo: SENDER,
     htmlBody: mail.html,
     attachments: [file.getBlob().setName('Pelai_Social_Style_' + cleanName_(facts.name) + '.pdf')]
-  });
+  };
+  if (logo) options.inlineImages = { pelaiLogo: logo };
+  GmailApp.sendEmail(to, EMAIL_SUBJECT, mail.text, options);
   return { ok: true, emailsLeft: MAX_EMAILS_PER_REPORT - facts.sends };
 }
 
@@ -194,7 +199,19 @@ var STYLE_SUMMARY = {
   }
 };
 
-function emailContent_(f) {
+/** The header logo as an inline image, or null if it can't be fetched (the email then goes without it). */
+function emailLogo_() {
+  try {
+    var res = UrlFetchApp.fetch(EMAIL_LOGO_URL, { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return null;
+    return res.getBlob().setName('pelai-logo.png');
+  } catch (err) {
+    console.warn('Email logo not available: ' + err);
+    return null;
+  }
+}
+
+function emailContent_(f, withLogo) {
   var s = STYLE_SUMMARY[f.style];
   var first = String(f.name || '').trim().split(/\s+/)[0] || 'there';
   var a = f.assertiveness.toFixed(3), r = f.responsiveness.toFixed(3);
@@ -227,9 +244,15 @@ function emailContent_(f) {
   };
   var html =
     '<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#120700;max-width:560px;">' +
-    '<div style="background:#062030;background:linear-gradient(135deg,#120700 0%,#120700 45%,#062030 100%);padding:20px 24px;border-radius:10px 10px 0 0;">' +
+    '<div style="background:#062030;background:linear-gradient(135deg,#120700 0%,#120700 45%,#062030 100%);padding:16px 24px;border-radius:10px 10px 0 0;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>' +
+    '<td style="vertical-align:middle;">' +
     '<div style="color:#C8A060;letter-spacing:4px;font-size:13px;font-weight:bold;">PELAI COLLECTIVE</div>' +
-    '<div style="color:#F0F8FC;font-size:22px;margin-top:6px;">Your Social Styles report</div></div>' +
+    '<div style="color:#F0F8FC;font-size:22px;margin-top:6px;">Your Social Styles report</div></td>' +
+    (withLogo
+      ? '<td style="vertical-align:middle;text-align:right;width:64px;"><img src="cid:pelaiLogo" width="58" height="72" alt="Pelai Collective" style="display:block;margin-left:auto;border:0;"></td>'
+      : '') +
+    '</tr></table></div>' +
     '<div style="border:1px solid #C8DCE5;border-top:0;padding:24px;border-radius:0 0 10px 10px;">' +
     '<p style="margin:0 0 14px;">Hello ' + esc(first) + ',</p>' +
     '<p style="margin:0 0 18px;">Thank you for completing the Pelai Collective Social Styles self-assessment. Your full report is attached as a PDF.</p>' +

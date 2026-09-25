@@ -48,6 +48,14 @@ The script runs under admin@pelaicollective.com, so ping@pelaicollective.com mus
 7. Copy the **Web app URL** (it ends in `/exec`) into `saveEndpoint` in `social_styles/config.js` and merge it into `main`.
    The "Email your report" box appears on the site once this is set.
 
-To change the script later, use **Deploy > Manage deployments > Edit > New version**, which keeps the same URL.
+To change the script later:
+
+1. Paste the new `Code.gs` over the old one and click **Save**.
+2. Run `testSetup` once. If Google asks for permissions again (for example, fetching the email logo from the
+   website), approve them. Otherwise the web app keeps running the old permissions and fails.
+3. **Deploy > Manage deployments > ✏️ Edit > Version: New version > Deploy**. This keeps the same Web app URL.
+
+The email header shows the logo from `social_styles/assets/pelai-logo-email.png` on the live site. If it can't be
+fetched, the email is sent without it.
 If you change `SAVE_TOKEN` in `Code.gs`, change `saveToken` in `social_styles/config.js` to match.
 To change the 3-send limit, edit `MAX_EMAILS_PER_REPORT` in `Code.gs` and the note in `social_styles/index.html`.
